@@ -4,7 +4,7 @@ error_reporting(-1);
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "u997410460_ratn0s1_ndh9";
+$database = "ecommerce";
 
 $conn = new mysqli($servername, $username, $password, $database);
 
