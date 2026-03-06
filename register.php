@@ -15,7 +15,7 @@ if(empty($fullname) || empty($email) || empty($phone) || empty($password)){
     exit;
 }
 
-# check if email exists
+// check if email exists
 $check = $conn->prepare("SELECT id FROM users WHERE email=?");
 $check->bind_param("s",$email);
 $check->execute();
@@ -29,16 +29,28 @@ if($check->num_rows > 0){
     exit;
 }
 
-# hash password
+// hash password
 $hashedPassword = password_hash($password,PASSWORD_DEFAULT);
 
+// insert user
 $stmt = $conn->prepare("INSERT INTO users(fullname,email,phone,password) VALUES(?,?,?,?)");
 $stmt->bind_param("ssss",$fullname,$email,$phone,$hashedPassword);
 
 if($stmt->execute()){
+    $userId = $stmt->insert_id;
+    $stmt->close();
+
+    // fetch inserted user data
+    $result = $conn->query("SELECT id, fullname FROM users WHERE id = $userId");
+    $user = $result->fetch_assoc();
+
     echo json_encode([
         "status"=>"success",
-        "message"=>"Registration Successful"
+        "message"=>"Registration Successful",
+        "user"=>[
+            "id"=>$user['id'],
+            "fullname"=>$user['fullname']
+        ]
     ]);
 }else{
     echo json_encode([
@@ -47,6 +59,5 @@ if($stmt->execute()){
     ]);
 }
 
-$stmt->close();
 $conn->close();
 ?>

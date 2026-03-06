@@ -5,11 +5,11 @@ header("Access-Control-Allow-Origin: *");
 
 require_once "database.php";
 
-$category = $_GET['category'];
+$category = $_REQUEST['category']; // works for GET and POST
 
-$sql = "SELECT id, subcategory_name, image 
-        FROM subcategories 
-        WHERE category='$category' AND active=1
+$sql = "SELECT id, subcategory_name, image
+        FROM subcategories
+        WHERE category='$category'
         ORDER BY sort_order ASC";
 
 $result = mysqli_query($conn,$sql);

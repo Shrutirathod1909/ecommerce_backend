@@ -4,23 +4,33 @@ require_once "database.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-$cartid = $data['cartid'];
-$qty = $data['quantity'];
+if(isset($data['cartid'])){
 
-$sql = "UPDATE cart SET quantity='$qty' WHERE cartid='$cartid'";
+$cartid = $data['cartid'];
+
+$sql = "DELETE FROM cart WHERE cartid='$cartid'";
 
 if($conn->query($sql)){
 
 echo json_encode([
- "success"=>true,
- "message"=>"Quantity Updated"
+"success"=>true,
+"message"=>"Item removed"
 ]);
 
 }else{
 
 echo json_encode([
- "success"=>false,
- "message"=>"Database Error"
+"success"=>false,
+"message"=>"Database error"
+]);
+
+}
+
+}else{
+
+echo json_encode([
+"success"=>false,
+"message"=>"cartid required"
 ]);
 
 }

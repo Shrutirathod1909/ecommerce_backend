@@ -1,28 +1,31 @@
 <?php
-
 header("Content-Type: application/json");
-$conn = new mysqli("localhost","root","","ecommerce");
+require_once "database.php";
+
+if(isset($_GET['userid'])){
 
 $userid = $_GET['userid'];
 
 $sql = "SELECT 
-cart.productid,
+cart.cartid,
 cart.quantity,
+products.productid,
 products.item_name,
+products.price,
 products.image1
 
 FROM cart
+
 JOIN products ON cart.productid = products.productid
-WHERE cart.userid='$userid'";
+
+WHERE cart.userid = '$userid' AND cart.status='active'";
 
 $result = $conn->query($sql);
 
 $cart = [];
 
-if($result->num_rows > 0){
-
 while($row = $result->fetch_assoc()){
-$cart[] = $row;
+    $cart[] = $row;
 }
 
 echo json_encode([
@@ -34,11 +37,10 @@ echo json_encode([
 
 echo json_encode([
 "success"=>false,
-"cart"=>[]
+"message"=>"userid required"
 ]);
 
 }
 
 $conn->close();
-
 ?>
